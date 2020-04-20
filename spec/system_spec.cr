@@ -90,15 +90,20 @@ module Crash
     it "updating is false after update" do
       engine = Engine.new
       engine.update(1.0)
-      # TODO: test if updating is false
+      engine.updating.should eq(false)
     end
 
     it "complete signal is dispatched after update" do
+      emitted = false
       engine = Engine.new
+      engine.on(Engine::UpdateCompleteEvent) do
+        emitted = true
+      end
       system = MockSystem.new
       engine.add_system system, 0
-      # TODO: test
+      emitted.should eq(false)
       engine.update(0.1)
+      emitted.should eq(true)
     end
 
     it "get_system returns the system" do
