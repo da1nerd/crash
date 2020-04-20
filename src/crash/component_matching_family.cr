@@ -23,12 +23,12 @@ module Crash
     # @param engine The engine that this family is managing teh NodeList for.
     #
     def initialize(node_class : Node.class, @engine : Engine)
-      @nodes = NodeList.new
+      @nodes = [] of Node
       @entities = Hash(Entity, Node).new
       @components = Hash(Component.class, String).new
-      @node_pool = NodePool.new(node_class, components)
+      @node_pool = NodePool.new(node_class, @components)
 
-      @node_pool.dispose(node_pool.get) # create a dummy instance to ensure describeType works.
+      @node_pool.dispose(@node_pool.get) # create a dummy instance to ensure describeType works.
 
       # TODO: get list of the components in the class and register them in @components
       # loop over components
@@ -84,7 +84,7 @@ module Crash
     # if it should be in this NodeList and adds it if so.
     #
     private def add_if_match(entity : Entity)
-      if !@entities[entity] # check if in array
+      if !@entities.has_key?(entity)
         @components.each do |component_class, _|
           return unless entity.has component_class
         end
@@ -104,13 +104,13 @@ module Crash
     # Removes the entity if it is in this family's NodeList.
     #
     private def remove_if_match(entity : Entity)
-      if @entities[entity]
+      if @entities.has_key? entity
         node : Node = @entities[entity]
         @entities.delete entity
-        @nodes.remove(node)
-        if engine.updating
+        @nodes.delete node
+        if @engine.updating
           @node_pool.cache node
-          @engine.update_complete.add release_node_pool_cache
+          # @engine.update_complete.add release_node_pool_cache
         else
           @node_pool.dispose node
         end
@@ -130,7 +130,7 @@ module Crash
     # Removes all nodes from the NodeList.
     #
     def clean_up
-      @nodes.each do |index, node|
+      @nodes.each do |node|
         @entities.delete node.entity
       end
 

@@ -9,6 +9,7 @@ module Crash
     # Indicates if the engine is currently in its update loop.
     getter updating
     getter systems
+    getter entities
 
     def initialize
       @entities = [] of Entity
@@ -35,19 +36,25 @@ module Crash
 
     # Remove an entity from the engine.
     def remove_entity(entity : Entity)
-      # destroy nodes containing this entity's components
-      # and remove them from the node lists
-      @entities.remove(entity)
+      @families.each do |node_class, family|
+        family.remove_entity entity
+      end
+      @entity_names.delete entity.name
+      @entities.delete entity
     end
 
     # Remove all entities from the engine.
     def remove_all_entities
-      @entities.clear
+      while @entities.size > 0
+        remove_entity @entities[0]
+      end
     end
 
     # Get an entity based on its name.
     def get_entity_by_name(name : String) : Entity | Nil
-      @entity_names[name]
+      if @entity_names.has_key? name
+        @entity_names[name]
+      end
     end
 
     def add_system(system : System)
@@ -105,9 +112,9 @@ module Crash
 
       # TODO: later we will allow creating custom families.
       family : Family = ComponentMatchingFamily.new(node_class, self)
-      families[node_class] = family
+      @families[node_class] = family
 
-      @entities.each do |index, entity|
+      @entities.each do |entity|
         family.new_entity entity
       end
       return family.node_list
@@ -122,10 +129,10 @@ module Crash
     # up memory and processor resources.
     #
     def release_node_list(node_class : Node.class)
-      if families.has_key? node_class
-        families[node_class].clean_up
+      if @families.has_key? node_class
+        @families[node_class].clean_up
       end
-      families.delete node_class
+      @families.delete node_class
     end
 
     # Update the engine. This causes the engine update loop to run, calling update on all the

@@ -10,3 +10,12 @@ class MockSystem < Crash::System
   def update(@time : Float64)
   end
 end
+
+class MockNode < Crash::Node
+end
+
+class MockNode2 < Crash::Node
+end
+
+class MockComponent < Crash::Component
+end

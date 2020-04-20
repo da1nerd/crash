@@ -93,7 +93,7 @@ module Crash
       # TODO: test if updating is false
     end
 
-    it "complete signal is dispatche after update" do
+    it "complete signal is dispatched after update" do
       # TODO: test
     end
 

@@ -10,10 +10,10 @@ module Crash
   private class NodePool
     @nodes : Array(Node)
     @node_cache : Array(Node)
-    @components : Array(String)
+    @components : Hash(Component.class, String)
 
     # Creates a pool for the given node class.
-    def initialize(@node_class : Node.class, @components : Array(String))
+    def initialize(@node_class : Node.class, @components : Hash(Component.class, String))
       @nodes = [] of Node
       @node_cache = [] of Node
     end
@@ -33,11 +33,11 @@ module Crash
     # Adds a node to the pool.
     #
     protected def dispose(node : Node)
-      @components.each do |index, component_name|
-        node[component_name] = null
+      @components.each do |component_class, component_name|
+        node.components.delete component_class
       end
       node.components.clear
-      node.entity = Nil
+      node.entity = nil
       @nodes.push node
     end
 

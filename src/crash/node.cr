@@ -11,7 +11,8 @@ module Crash
     # The entity whose components are included in the node.
     @entity : Entity?
     @components : Hash(Component.class, Component)
-    protected property entity, components
+    protected property entity
+    protected property components
 
     def initialize
       @components = Hash(Component.class, Component).new
