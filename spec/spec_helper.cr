@@ -17,3 +17,9 @@ end
 
 class MockComponent < Crash::Component
 end
+
+class MockComponent2 < Crash::Component
+end
+
+class MockComponentExtended < MockComponent
+end

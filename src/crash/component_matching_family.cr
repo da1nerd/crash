@@ -92,7 +92,9 @@ module Crash
         node : Node = @node_pool.get
         node.entity = entity
         @components.each do |component_class, _|
-          node.components[component_class] = entity.get(component_class)
+          if component = entity.get(component_class)
+            node.components[component_class] = component
+          end
         end
 
         @entities[entity] = node
