@@ -52,7 +52,7 @@ module Crash
     # Releases all nodes from the cache into the pool
     #
     protected def release_cache
-      @node_cache.each do |index, node|
+      @node_cache.each do |node|
         dispose node
       end
       @node_cache.clear

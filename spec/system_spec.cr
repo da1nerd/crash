@@ -94,7 +94,11 @@ module Crash
     end
 
     it "complete signal is dispatched after update" do
+      engine = Engine.new
+      system = MockSystem.new
+      engine.add_system system, 0
       # TODO: test
+      engine.update(0.1)
     end
 
     it "get_system returns the system" do

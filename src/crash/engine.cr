@@ -1,5 +1,8 @@
+require "event_handler"
+
 module Crash
   class Engine
+    include EventHandler
     @entities : Array(Entity)
     @systems : Array(System)
     @entity_names : Hash(String, Entity)
@@ -10,6 +13,8 @@ module Crash
     getter updating
     getter systems
     getter entities
+
+    event UpdateCompleteEvent
 
     def initialize
       @entities = [] of Entity
@@ -26,9 +31,22 @@ module Crash
       end
       @entities.push entity
       @entity_names[entity.name] = entity
-      # entity.component_added.add( componentAdded )
-      # entity.componentRemoved.add( componentRemoved );
-      # entity.nameChanged.add( entityNameChanged );
+      entity.on(Entity::NameChangedEvent) do |e|
+        if @entity_names[e.old_name] === e.entity
+          @entity_names.delete e.old_name
+          @entity_names[e.entity.name] = e.entity
+        end
+      end
+      entity.on(Entity::ComponentAddedEvent) do |e|
+        @families.each do |node_class, family|
+          family.component_added_to_entity e.entity, e.component_class
+        end
+      end
+      entity.on(Entity::ComponentRemovedEvent) do |e|
+        @families.each do |node_class, family|
+          family.component_removed_from_entity e.entity, e.component_class
+        end
+      end
       @families.each do |node_class, family|
         family.new_entity entity
       end
@@ -36,6 +54,9 @@ module Crash
 
     # Remove an entity from the engine.
     def remove_entity(entity : Entity)
+      entity.off Entity::NameChangedEvent
+      entity.off Entity::ComponentAddedEvent
+      entity.off Entity::ComponentRemovedEvent
       @families.each do |node_class, family|
         family.remove_entity entity
       end
@@ -146,6 +167,7 @@ module Crash
         system.update(time)
       end
       @updating = false
+      emit UpdateCompleteEvent
     end
   end
 end

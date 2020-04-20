@@ -65,7 +65,7 @@ module Crash
     # is required by this family's NodeList and if so, we check if the entity is in this this NodeList and
     # remove it if so.
     #
-    def component_removed_from_entity(entity : Entity, component_class : Comoponent.class)
+    def component_removed_from_entity(entity : Entity, component_class : Component.class)
       if @components.has_key? component_class
       end
       remove_if_match entity
@@ -110,7 +110,7 @@ module Crash
         @nodes.delete node
         if @engine.updating
           @node_pool.cache node
-          # @engine.update_complete.add release_node_pool_cache
+          @engine.on(Engine::UpdateCompleteEvent, ->release_node_pool_cache(Engine::UpdateCompleteEvent))
         else
           @node_pool.dispose node
         end
@@ -121,8 +121,8 @@ module Crash
     # Releases the nodes that were added to the node pool during this engine update, so they can
     # be reused.
     #
-    private def release_node_pool_cache
-      @engine.update_complete.remove release_node_pool_cache
+    private def release_node_pool_cache(e : Engine::UpdateCompleteEvent)
+      @engine.off Engine::UpdateCompleteEvent
       @node_pool.release_cache
     end
 

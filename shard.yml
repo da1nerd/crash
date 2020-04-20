@@ -7,6 +7,11 @@ authors:
 description: |
   An entity-component-system framework.
 
+dependencies:
+  event_handler:
+    github: crystallabs/event_handler
+    version: 0.15.2
+
 crystal: 0.34.0
 
 license: MIT

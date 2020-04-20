@@ -1,10 +1,22 @@
+require "event_handler"
+
 module Crash
   class Entity
+    include EventHandler
     @@name_count : Int32 = 0
     @name : String
     @components : Hash(Component.class, Component)
-
     protected getter name
+
+    # Dispatched when a component is added to the entity
+    event ComponentAddedEvent, entity : Entity, component_class : Component.class
+
+    # Dispatched when a component is removed from the entity
+    event ComponentRemovedEvent, entity : Entity, component_class : Component.class
+
+    # Dispatched when the name of the entity changes.
+    # Used internally by the engine to track entitites based on their names.
+    event NameChangedEvent, entity : Entity, old_name : String
 
     def initialize
       @@name_count += 1
@@ -19,7 +31,7 @@ module Crash
       if @name != name
         previous = @name
         @name = name
-        # TODO: dispatch
+        emit NameChangedEvent, self, previous
       end
     end
 
@@ -29,7 +41,7 @@ module Crash
         remove component_class
       end
       @components[component_class] = component
-      # TODO: dispatch event
+      emit ComponentAddedEvent, self, component_class
       self
     end
 
@@ -37,7 +49,7 @@ module Crash
       if @components.has_key? component_class
         component = @components[component_class]
         @components.delete component_class
-        # TODO: dispatch event
+        emit ComponentRemovedEvent, self, component_class
         return component
       end
     end
