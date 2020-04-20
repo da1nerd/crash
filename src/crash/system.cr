@@ -15,6 +15,11 @@ module Crash
     @priority : Int32 = 0
     protected property priority
 
+    # Used internally to hold the type of the system class.
+    # This is used to retrieve systems by class type.
+    @type : System.class = System
+    protected property type
+
     #
     # Called just after the system is added to the engine, before any calls to the update method.
     # Override this method to add your own functionality.
@@ -44,7 +49,6 @@ module Crash
     # @param time The duration, in seconds, of the frame.
     #
     def update(time : Float64)
-      puts "calling #{self.priority}"
     end
   end
 end

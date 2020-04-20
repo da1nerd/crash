@@ -4,9 +4,9 @@ require "./components/**"
 require "./systems/**"
 
 class MockSystem < Crash::System
-    @time : Float64 = 0
-    getter time
+  @time : Float64 = 0
+  getter time
 
-    def update(@time : Float64)
-    end
+  def update(@time : Float64)
+  end
 end
