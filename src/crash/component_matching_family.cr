@@ -67,8 +67,8 @@ module Crash
     #
     def component_removed_from_entity(entity : Entity, component_class : Component.class)
       if @components.has_key? component_class
+        remove_if_match entity
       end
-      remove_if_match entity
     end
 
     #

@@ -1,7 +1,5 @@
 require "spec"
 require "../src/crash"
-require "./components/**"
-require "./systems/**"
 
 class MockSystem < Crash::System
   @time : Float64 = 0

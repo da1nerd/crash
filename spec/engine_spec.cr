@@ -67,7 +67,6 @@ module Crash
       engine.add_entity entity
       entity.add(MockComponent.new)
       # TODO: test calls
-      # This doesn't work yet
     end
 
     it "component removed checks with all families" do
@@ -79,7 +78,6 @@ module Crash
       entity.add(MockComponent.new)
       entity.remove(MockComponent)
       # TODO: test calls
-      # This doesn't work yet
     end
 
     it "get node list creates family" do
@@ -94,7 +92,6 @@ module Crash
       engine.add_entity Entity.new
       engine.get_node_list MockNode
       # TODO: test
-      # This doesn't work yet.
     end
 
     it "release node list calls cleanup" do
@@ -125,7 +122,6 @@ module Crash
       entity.name = "otherName"
       other = engine.get_entity_by_name "otherName"
       other.should be(entity)
-      # TODO: this is not working
     end
 
     it "entity cannot be obtained by old name after renaming" do
@@ -135,7 +131,6 @@ module Crash
       entity.name = "otherName"
       other = engine.get_entity_by_name "anything"
       other.should be(nil)
-      # TODO: this is not working
     end
   end
 end
