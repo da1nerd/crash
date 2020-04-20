@@ -5,13 +5,20 @@ module Crash
     @node_lists : Hash(String, Array(Node))
     @entity_names : Hash(String, Entity)
     @families : Hash(Node.class, Family)
+    @updating : Bool
 
+    # Indicates if the engine is currently in its update loop.
+    getter updating
+    getter systems
+
+    
     def initialize
       @entities = [] of Entity
       @systems = [] of System
       @node_lists = Hash(String, Array(Node)).new
       @entity_names = Hash(String, Entity).new
       @families = Hash(Node.class, Family).new
+      @updating = false
     end
 
     def add_entity(entity : Entity)
@@ -37,6 +44,10 @@ module Crash
       @entities.remove(entity)
     end
 
+    def add_system(system : System)
+      add_system system, system.priority
+    end
+
     def add_system(system : System, priority : Int32)
       system.priority = priority
       system.add_to_engine self
@@ -44,8 +55,8 @@ module Crash
     end
 
     def remove_system(system : System)
-      system.end
-      @systems.remove(system)
+      @systems.delete system
+      system.remove_from_engine self
     end
 
     def get_node_list(node_class : Node.class) : Array(Node)
@@ -70,9 +81,11 @@ module Crash
     end
 
     def update(time : Float64)
+      @updating = true
       @systems.each do |system|
         system.update(time)
       end
+      @updating = false
     end
   end
 end

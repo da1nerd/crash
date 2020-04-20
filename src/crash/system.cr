@@ -9,7 +9,7 @@ module Crash
   # methods of those systems collectively constituting the engine update loop. Systems generally operate on
   # node lists - collections of nodes. Each node contains the components from an entity in the engine
   # that match the node.
-  abstract class System
+  class System
     # Used internally to hold the priority of this system within the system list. This is
     # used to order the systems so they are updated in the correct order.
     @priority : Int32 = 0
@@ -43,6 +43,8 @@ module Crash
     #
     # @param time The duration, in seconds, of the frame.
     #
-    abstract def update(time : Float64)
+    def update(time : Float64)
+      puts "calling #{self.priority}"
+    end
   end
 end
