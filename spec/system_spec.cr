@@ -108,5 +108,20 @@ module Crash
       engine = Engine.new
       engine.get_system(MockSystem).should eq(nil)
     end
+
+    it "get_system returns nil if there is no matching system" do
+      engine = Engine.new
+      engine.add_system System.new
+      engine.get_system(MockSystem).should eq(nil)
+    end
+
+    it "removes all systems" do
+      engine = Engine.new
+      engine.add_system System.new
+      engine.add_system MockSystem.new
+      engine.remove_all_systems
+      engine.get_system(MockSystem).should eq(nil)
+      engine.get_system(System).should eq(nil)
+    end
   end
 end

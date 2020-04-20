@@ -65,6 +65,9 @@ module Crash
       system.priority = priority
       system.add_to_engine self
       @systems.push system
+      @systems.sort! do |a, b|
+        next a.priority - b.priority
+      end
     end
 
     # Remove a system from the engine.
