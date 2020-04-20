@@ -4,6 +4,9 @@ version: 0.1.0
 authors:
   - Joel <joel@neutrinographics.com>
 
+description: |
+  An entity-component-system framework.
+
 crystal: 0.34.0
 
 license: MIT
