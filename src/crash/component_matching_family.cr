@@ -30,9 +30,7 @@ module Crash
 
       @node_pool.dispose(@node_pool.get) # create a dummy instance to ensure describeType works.
 
-      # TODO: get list of the components in the class and register them in @components
-      # loop over components
-      # @components[component_class] = component_name
+      @components = node_class.components
     end
 
     #
@@ -91,10 +89,8 @@ module Crash
 
         node : Node = @node_pool.get
         node.entity = entity
-        @components.each do |component_class, _|
-          if component = entity.get(component_class)
-            node.components[component_class] = component
-          end
+        @components.each do |component_class, property_name|
+          node.set_component(property_name, entity.get(component_class).as(Component))
         end
 
         @entities[entity] = node

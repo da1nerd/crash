@@ -34,9 +34,10 @@ module Crash
     #
     protected def dispose(node : Node)
       @components.each do |component_class, component_name|
-        node.components.delete component_class
+        # TODO: how can we remove the component from the node?
+        #  Do we really need to remove it?
+        # node.set_component(component_name, nil)
       end
-      node.components.clear
       node.entity = nil
       @nodes.push node
     end

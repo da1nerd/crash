@@ -35,21 +35,21 @@ module Crash
       end
     end
 
-     #
-		 # Add a component to the entity.
-		 #
-		 # @param component The component object to add.
-		 # @param componentClass The class of the component. This is only necessary if the component
-		 # extends another component class and you want the framework to treat the component as of 
-		 # the base class type. If not set, the class type is determined directly from the component.
-		 #
-		 # @return A reference to the entity. This enables the chaining of calls to add, to make
-		 # creating and configuring entities cleaner. e.g.
-		 #
-		 # <code>var entity : Entity = new Entity()
-		 #     .add( new Position( 100, 200 )
-		 #     .add( new Display( new PlayerClip() );</code>
-		 #
+    #
+    # Add a component to the entity.
+    #
+    # @param component The component object to add.
+    # @param componentClass The class of the component. This is only necessary if the component
+    # extends another component class and you want the framework to treat the component as of
+    # the base class type. If not set, the class type is determined directly from the component.
+    #
+    # @return A reference to the entity. This enables the chaining of calls to add, to make
+    # creating and configuring entities cleaner. e.g.
+    #
+    # <code>var entity : Entity = new Entity()
+    #     .add( new Position( 100, 200 )
+    #     .add( new Display( new PlayerClip() );</code>
+    #
     def add(component : Component, component_class : Component.class)
       if @components.has_key? component_class
         remove component_class

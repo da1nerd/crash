@@ -10,12 +10,26 @@ class MockSystem < Crash::System
 end
 
 class MockNode < Crash::Node
+  @point : Point
+  getter point
+
+  def initialize
+    super()
+    @point = Point.new
+  end
 end
 
 class MockNode2 < Crash::Node
 end
 
+class Point < Crash::Component
+  @x : Int32 = 1
+  @y : Int32 = 3
+end
+
 class MockComponent < Crash::Component
+  @x : Int32 = 1
+  @y : Int32 = 3
 end
 
 class MockComponent2 < Crash::Component

@@ -10,12 +10,40 @@ module Crash
   class Node
     # The entity whose components are included in the node.
     @entity : Entity?
-    @components : Hash(Component.class, Component)
+    # @components : Hash(Component.class, Component)
     protected property entity
-    protected property components
 
-    def initialize
-      @components = Hash(Component.class, Component).new
+    def set_component(name : String, value : Component)
+      {% begin %}
+      {% for ivar in @type.instance_vars %}
+        {% if ivar.name != "entity" && ivar.name != "components" %}
+          if name == {{ivar.name.stringify}}
+            @{{ivar.name}} = value.as({{ivar.type}})
+            return
+          end
+        {% end %}
+      {% end %}
+    {% end %}
     end
+
+    def self.components : Hash(Component.class, String)
+      {% begin %}
+        {% components = {} of Nil => Nil %}
+        {% for ivar in @type.instance_vars %}
+          {% if ivar.name != "entity" && ivar.name != "components" %}
+            {% components[ivar.type] = ivar.name.stringify %}
+          {% end %}
+        {% end %}
+        {{ components }} of Component.class => String
+      {% end %}
+    end
+
+    # def components
+    #   {{@type}}.components
+    # end
+
+    # def initialize
+    #   @components = Hash(Component.class, Component).new
+    # end
   end
 end
