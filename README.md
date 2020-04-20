@@ -1,4 +1,6 @@
 # crash
+[![GitHub release](https://img.shields.io/github/release/neutrinog/crash.svg)](https://github.com/neutrinog/crash/releases)
+[![Build Status](https://travis-ci.org/neutrinog/crash.svg?branch=master)](https://travis-ci.org/neutrinog/crash)
 
 A crystal implementation of the [Ash](https://github.com/richardlord/Ash) entity-component-system framework.
 
