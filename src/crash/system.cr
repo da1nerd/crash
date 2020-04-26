@@ -26,7 +26,7 @@ module Crash
     #
     # @param engine The engine the system was added to.
     #
-    def add_to_engine(engine : Engine)
+    def add_to_engine(engine : Crash::Engine)
     end
 
     #
@@ -35,7 +35,7 @@ module Crash
     #
     # @param engine The engine the system was removed from.
     #
-    def remove_from_engine(engine : Engine)
+    def remove_from_engine(engine : Crash::Engine)
     end
 
     #
