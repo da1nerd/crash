@@ -9,7 +9,7 @@ module Crash
   # methods of those systems collectively constituting the engine update loop. Systems generally operate on
   # node lists - collections of nodes. Each node contains the components from an entity in the engine
   # that match the node.
-  class System
+  abstract class System
     # Used internally to hold the priority of this system within the system list. This is
     # used to order the systems so they are updated in the correct order.
     @priority : Int32 = 0

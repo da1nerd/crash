@@ -9,6 +9,9 @@ class MockSystem < Crash::System
   end
 end
 
+class MockSystem2 < Crash::System
+end
+
 class MockNode < Crash::Node
   @point : Point
   getter point

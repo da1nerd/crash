@@ -4,9 +4,9 @@ module Crash
   describe Crash::System do
     it "returns all the systems" do
       engine = Crash::Engine.new
-      system1 = Crash::System.new
+      system1 = MockSystem.new
       engine.add_system system1, 1
-      system2 = Crash::System.new
+      system2 = MockSystem.new
       engine.add_system system2, 1
       engine.systems.size.should eq(2)
       engine.systems.should eq([system1, system2])
@@ -14,7 +14,7 @@ module Crash
 
     it "removes a system from the engine" do
       engine = Crash::Engine.new
-      system1 = Crash::System.new
+      system1 = MockSystem.new
       engine.add_system system1, 1
       engine.remove_system(system1)
       engine.systems.size.should eq(0)
@@ -29,7 +29,7 @@ module Crash
     end
 
     it "system default priority is 0" do
-      system = Crash::System.new
+      system = MockSystem.new
       system.priority.should eq(0)
       engine = Crash::Engine.new
       engine.add_system system
@@ -37,7 +37,7 @@ module Crash
     end
 
     it "can set priority when adding a system" do
-      system = Crash::System.new
+      system = MockSystem.new
       system.priority.should eq(0)
       engine = Crash::Engine.new
       engine.add_system system, 1
@@ -46,9 +46,9 @@ module Crash
 
     it "systems update in priority order if same as add order" do
       engine = Crash::Engine.new
-      system1 = Crash::System.new
+      system1 = MockSystem.new
       engine.add_system system1, 1
-      system2 = Crash::System.new
+      system2 = MockSystem.new
       engine.add_system system2, 2
       engine.update(0.1)
       # TODO: test order
@@ -56,9 +56,9 @@ module Crash
 
     it "systems update in priority order if reverse of add order" do
       engine = Crash::Engine.new
-      system2 = Crash::System.new
+      system2 = MockSystem.new
       engine.add_system system2, 2
-      system1 = Crash::System.new
+      system1 = MockSystem.new
       engine.add_system system1, 1
       engine.update(0.1)
       # TODO: test order
@@ -66,9 +66,9 @@ module Crash
 
     it "systems update in priority order if priorities are negative" do
       engine = Crash::Engine.new
-      system1 = Crash::System.new
+      system1 = MockSystem.new
       engine.add_system system1, 1
-      system2 = Crash::System.new
+      system2 = MockSystem.new
       engine.add_system system2, -2
       engine.update(0.1)
       # TODO: test order
@@ -81,7 +81,7 @@ module Crash
 
     it "updating is true during update" do
       engine = Engine.new
-      system = System.new
+      system = MockSystem.new
       engine.add_system(system)
       # TODO: test if updating is true
       engine.update(1.0)
@@ -120,17 +120,17 @@ module Crash
 
     it "get_system returns nil if there is no matching system" do
       engine = Engine.new
-      engine.add_system System.new
+      engine.add_system MockSystem2.new
       engine.get_system(MockSystem).should eq(nil)
     end
 
     it "removes all systems" do
       engine = Engine.new
-      engine.add_system System.new
+      engine.add_system MockSystem2.new
       engine.add_system MockSystem.new
       engine.remove_all_systems
       engine.get_system(MockSystem).should eq(nil)
-      engine.get_system(System).should eq(nil)
+      engine.get_system(MockSystem2).should eq(nil)
     end
   end
 end
