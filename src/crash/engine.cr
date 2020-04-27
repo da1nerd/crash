@@ -119,6 +119,19 @@ module Crash
       @systems.clear
     end
 
+    protected def self.generate_family_key(*components : Crash::Component.class) : String
+      sorted_comps = components.to_a.sort do |a, b|
+        next -1 if a.name < b.name
+        next 1 if a.name > b.name
+        next 0
+      end
+      String.build do |io|
+        sorted_comps.each do |comp|
+          io << "+" << comp.name
+        end
+      end
+    end
+
     # Get a collection of nodes from the engine, based on the type of the node required.
     #
     # The engine will create the appropriate NodeList if it doesn't already exist and
@@ -127,16 +140,7 @@ module Crash
     #
     # If a NodeList is no longer required, release it with the releaseNodeList method.
     def get_entities(*components : Crash::Component.class) : Array(Entity)
-      sorted_comps = components.to_a.sort do |a, b|
-        next -1 if a.name < b.name
-        next 1 if a.name > b.name
-        next 0
-      end
-      key = String.build do |io|
-        sorted_comps.each do |comp|
-          io << "+" << comp.name
-        end
-      end
+      key = Engine.generate_family_key(*components)
 
       if @families.has_key? key
         return @families[key].entity_list
@@ -160,11 +164,12 @@ module Crash
     # It is not essential to release a list, but releasing it will free
     # up memory and processor resources.
     #
-    def release_node_list(node_class : Node.class)
-      if @families.has_key? node_class
-        @families[node_class].clean_up
+    def release_entity_list(*components : Crash::Component.class)
+      key = Engine.generate_family_key(*components)
+      if @families.has_key? key
+        @families[key].clean_up
       end
-      @families.delete node_class
+      @families.delete key
     end
 
     # Update the engine. This causes the engine update loop to run, calling update on all the
