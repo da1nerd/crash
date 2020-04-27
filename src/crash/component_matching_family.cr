@@ -34,7 +34,7 @@ module Crash
     end
 
     #
-    # The nodelist managed by this family. This is a reference that remains valid always
+    # The entity list managed by this family. This is a reference that remains valid always
     # since it is retained and reused by Systems that use the list. i.e. we never recreate the list,
     # we always modify it in place.
     #
@@ -44,7 +44,7 @@ module Crash
 
     #
     # Called by the engine when an entity has been added to it. We check if the entity should be in
-    # this family's NodeList and add it if appropriate.
+    # this family's entity list and add it if appropriate.
     #
     def new_entity(entity : Entity)
       add_if_match entity
@@ -52,7 +52,7 @@ module Crash
 
     #
     # Called by the engine when a component has been added to an entity. We check if the entity is not in
-    # this family's NodeList and should be, and add it if appropriate.
+    # this family's entity list and should be, and add it if appropriate.
     #
     def component_added_to_entity(entity : Entity, component_class : Component.class)
       add_if_match entity
@@ -60,7 +60,7 @@ module Crash
 
     #
     # Called by the engine when a component has been removed from an entity. We check if the removed component
-    # is required by this family's NodeList and if so, we check if the entity is in this this NodeList and
+    # is required by this family's entity list and if so, we check if the entity is in this this entity list and
     # remove it if so.
     #
     def component_removed_from_entity(entity : Entity, component_class : Component.class)
@@ -71,15 +71,15 @@ module Crash
 
     #
     # Called by the engine when an entity has been rmoved from it. We check if the entity is in
-    # this family's NodeList and remove it if so.
+    # this family's entity list and remove it if so.
     #
     def remove_entity(entity : Entity)
       remove_if_match entity
     end
 
     #
-    # If the entity is not in this family's NodeList, tests the components of the entity to see
-    # if it should be in this NodeList and adds it if so.
+    # If the entity is not in this family's entity list, tests the components of the entity to see
+    # if it should be in this entity list and adds it if so.
     #
     private def add_if_match(entity : Entity)
       if !@entity_map.has_key?(entity)
@@ -92,7 +92,7 @@ module Crash
     end
 
     #
-    # Removes the entity if it is in this family's NodeList.
+    # Removes the entity if it is in this family's entity list.
     #
     private def remove_if_match(entity : Entity)
       if @entity_map.has_key? entity
@@ -102,7 +102,7 @@ module Crash
     end
 
     #
-    # Removes all nodes from the NodeList.
+    # Removes all entities from the entity list.
     #
     def clean_up
       @entities.clear

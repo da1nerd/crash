@@ -38,16 +38,16 @@ module Crash
         end
       end
       entity.on(Entity::ComponentAddedEvent) do |e|
-        @families.each do |node_class, family|
+        @families.each do |_, family|
           family.component_added_to_entity e.entity, e.component_class
         end
       end
       entity.on(Entity::ComponentRemovedEvent) do |e|
-        @families.each do |node_class, family|
+        @families.each do |_, family|
           family.component_removed_from_entity e.entity, e.component_class
         end
       end
-      @families.each do |node_class, family|
+      @families.each do |_, family|
         family.new_entity entity
       end
     end
@@ -57,7 +57,7 @@ module Crash
       entity.off Entity::NameChangedEvent
       entity.off Entity::ComponentAddedEvent
       entity.off Entity::ComponentRemovedEvent
-      @families.each do |node_class, family|
+      @families.each do |_, family|
         family.remove_entity entity
       end
       @entity_names.delete entity.name
@@ -132,13 +132,13 @@ module Crash
       end
     end
 
-    # Get a collection of nodes from the engine, based on the type of the node required.
+    # Get a collection of entities from the engine, based on the type of the components required.
     #
-    # The engine will create the appropriate NodeList if it doesn't already exist and
+    # The engine will create the appropriate entity list if it doesn't already exist and
     # will keep its contents up to date as entities are added to and removed from the
     # engine.
     #
-    # If a NodeList is no longer required, release it with the releaseNodeList method.
+    # If a entity list is no longer required, release it with the release_entities method.
     def get_entities(*components : Crash::Component.class) : Array(Entity)
       key = Engine.generate_family_key(*components)
 
@@ -157,14 +157,14 @@ module Crash
     end
 
     #
-    # If a NodeList is no longer required, this method will stop the engine updating
+    # If a entity list is no longer required, this method will stop the engine updating
     # the list and will release all references to the list within the framework
     # classes, enabling it to be garbage collected.
     #
     # It is not essential to release a list, but releasing it will free
     # up memory and processor resources.
     #
-    def release_entity_list(*components : Crash::Component.class)
+    def release_entities(*components : Crash::Component.class)
       key = Engine.generate_family_key(*components)
       if @families.has_key? key
         @families[key].clean_up
