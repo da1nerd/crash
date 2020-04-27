@@ -96,13 +96,6 @@ module Crash
       # TODO: test
     end
 
-    it "release node list calls cleanup" do
-      engine = Engine.new
-      engine.get_entities MockComponent
-      engine.release_node_list MockNode
-      # TODO: test
-    end
-
     it "entity can be obtained by name" do
       engine = Engine.new
       entity = Entity.new("anything")
