@@ -1,5 +1,7 @@
 require "./spec_helper"
 
+include Hello
+
 module Crash
   describe Crash::Engine do
     it "entities getter returns all the entities" do
@@ -32,8 +34,8 @@ module Crash
 
     it "add entity checks with all families" do
       engine = Engine.new
-      engine.get_node_list(MockNode)
-      engine.get_node_list(MockNode2)
+      engine.get_entities(MockComponent)
+      engine.get_entities(MockComponent3)
       entity = Entity.new
       engine.add_entity entity
       # TODO: check calls
@@ -41,8 +43,8 @@ module Crash
 
     it "remove entity checks with all families" do
       engine = Engine.new
-      engine.get_node_list(MockNode)
-      engine.get_node_list(MockNode2)
+      engine.get_entities(MockComponent)
+      engine.get_entities(MockComponent3)
       entity = Entity.new
       engine.add_entity entity
       engine.remove_entity entity
@@ -51,8 +53,8 @@ module Crash
 
     it "remove all entities checks with all families" do
       engine = Engine.new
-      engine.get_node_list(MockNode)
-      engine.get_node_list(MockNode2)
+      engine.get_entities(MockComponent)
+      engine.get_entities(MockComponent3)
       engine.add_entity Entity.new
       engine.add_entity Entity.new
       engine.remove_all_entities
@@ -61,8 +63,8 @@ module Crash
 
     it "component added checks with all families" do
       engine = Engine.new
-      engine.get_node_list(MockNode)
-      engine.get_node_list(MockNode2)
+      engine.get_entities(MockComponent)
+      engine.get_entities(MockComponent3)
       entity = Entity.new
       engine.add_entity entity
       entity.add(MockComponent.new)
@@ -71,8 +73,8 @@ module Crash
 
     it "component removed checks with all families" do
       engine = Engine.new
-      engine.get_node_list(MockNode)
-      engine.get_node_list(MockNode2)
+      engine.get_entities(MockComponent)
+      engine.get_entities(MockComponent3)
       entity = Entity.new
       engine.add_entity entity
       entity.add(MockComponent.new)
@@ -82,7 +84,7 @@ module Crash
 
     it "get node list creates family" do
       engine = Engine.new
-      engine.get_node_list MockNode
+      engine.get_entities MockComponent
       # TODO: test calls
     end
 
@@ -90,13 +92,13 @@ module Crash
       engine = Engine.new
       engine.add_entity Entity.new
       engine.add_entity Entity.new
-      engine.get_node_list MockNode
+      engine.get_entities MockComponent
       # TODO: test
     end
 
     it "release node list calls cleanup" do
       engine = Engine.new
-      engine.get_node_list MockNode
+      engine.get_entities MockComponent
       engine.release_node_list MockNode
       # TODO: test
     end
@@ -131,6 +133,11 @@ module Crash
       entity.name = "otherName"
       other = engine.get_entity_by_name "anything"
       other.should be(nil)
+    end
+
+    it "works" do
+      engine = Engine.new
+      engine.get_entities(MockComponent3, MockComponent)
     end
   end
 end

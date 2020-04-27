@@ -10,7 +10,7 @@ module Crash
     # since it is retained and reused by Systems that use the list. i.e. never recreate the list,
     # always modify it in place.
     #
-    abstract def node_list : Array(Node)
+    abstract def entity_list : Array(Node)
 
     # An entity has been added to the engine. It may already have components so test the entity
     # for inclusion in this family's NodeList.

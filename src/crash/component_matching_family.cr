@@ -9,10 +9,10 @@ module Crash
   # they contain components matching all the public properties of the node class.
   #
   class ComponentMatchingFamily < Family
-    @nodes : Array(Node)
-    @entities : Hash(Entity, Node)
-    @components : Hash(Component.class, String)
-    @node_pool : NodePool
+    @entities : Array(Entity)
+    @entity_map : Hash(Entity, Bool)
+    @component_to_name_map : Hash(Crash::Component.class, String)
+    @name_to_component_map : Hash(String, Crash::Component.class)
     @engine : Engine
 
     #
@@ -22,15 +22,15 @@ module Crash
     # @param nodeClass The type of node to create and manage a NodeList for.
     # @param engine The engine that this family is managing teh NodeList for.
     #
-    def initialize(node_class : Node.class, @engine : Engine)
-      @nodes = [] of Node
-      @entities = Hash(Entity, Node).new
-      @components = Hash(Component.class, String).new
-      @node_pool = NodePool.new(node_class, @components)
-
-      @node_pool.dispose(@node_pool.get) # create a dummy instance to ensure describeType works.
-
-      @components = node_class.components
+    def initialize(@engine : Engine, *components : Crash::Component.class)
+      @name_to_component_map = Hash(String, Crash::Component.class).new
+      @component_to_name_map = Hash(Crash::Component.class, String).new
+      @entity_map = Hash(Entity, Bool).new
+      @entities = [] of Entity
+      components.each do |c|
+        @name_to_component_map[c.name] = c
+        @component_to_name_map[c] = c.name
+      end
     end
 
     #
@@ -38,8 +38,8 @@ module Crash
     # since it is retained and reused by Systems that use the list. i.e. we never recreate the list,
     # we always modify it in place.
     #
-    def node_list : Array(Node)
-      @nodes
+    def entity_list : Array(Entity)
+      @entities
     end
 
     #
@@ -64,7 +64,7 @@ module Crash
     # remove it if so.
     #
     def component_removed_from_entity(entity : Entity, component_class : Component.class)
-      if @components.has_key? component_class
+      if @component_to_name_map.has_key? component_class
         remove_if_match entity
       end
     end
@@ -82,19 +82,12 @@ module Crash
     # if it should be in this NodeList and adds it if so.
     #
     private def add_if_match(entity : Entity)
-      if !@entities.has_key?(entity)
-        @components.each do |component_class, _|
+      if !@entity_map.has_key?(entity)
+        @component_to_name_map.keys.each do |component_class|
           return unless entity.has component_class
         end
-
-        node : Node = @node_pool.get
-        node.entity = entity
-        @components.each do |component_class, property_name|
-          node.set_component(property_name, entity.get(component_class).as(Component))
-        end
-
-        @entities[entity] = node
-        @nodes.push node
+        @entity_map[entity] = true
+        @entities << entity
       end
     end
 
@@ -102,37 +95,18 @@ module Crash
     # Removes the entity if it is in this family's NodeList.
     #
     private def remove_if_match(entity : Entity)
-      if @entities.has_key? entity
-        node : Node = @entities[entity]
+      if @entity_map.has_key? entity
+        @entity_map.delete entity
         @entities.delete entity
-        @nodes.delete node
-        if @engine.updating
-          @node_pool.cache node
-          @engine.on(Engine::UpdateCompleteEvent, ->release_node_pool_cache(Engine::UpdateCompleteEvent))
-        else
-          @node_pool.dispose node
-        end
       end
-    end
-
-    #
-    # Releases the nodes that were added to the node pool during this engine update, so they can
-    # be reused.
-    #
-    private def release_node_pool_cache(e : Engine::UpdateCompleteEvent)
-      @engine.off Engine::UpdateCompleteEvent
-      @node_pool.release_cache
     end
 
     #
     # Removes all nodes from the NodeList.
     #
     def clean_up
-      @nodes.each do |node|
-        @entities.delete node.entity
-      end
-
-      @nodes.clear
+      @entities.clear
+      @entity_map.clear
     end
   end
 end

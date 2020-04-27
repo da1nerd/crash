@@ -30,6 +30,11 @@ class Point < Crash::Component
   @y : Int32 = 3
 end
 
+module Hello
+  class MockComponent3 < Crash::Component
+  end
+end
+
 class MockComponent < Crash::Component
   @x : Int32 = 1
   @y : Int32 = 3

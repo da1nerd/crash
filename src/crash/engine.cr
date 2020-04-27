@@ -6,7 +6,7 @@ module Crash
     @entities : Array(Entity)
     @systems : Array(System)
     @entity_names : Hash(String, Entity)
-    @families : Hash(Node.class, Family)
+    @families : Hash(String, Family)
     @updating : Bool
 
     # Indicates if the engine is currently in its update loop.
@@ -20,7 +20,7 @@ module Crash
       @entities = [] of Entity
       @systems = [] of System
       @entity_names = Hash(String, Entity).new
-      @families = Hash(Node.class, Family).new
+      @families = Hash(String, Family).new
       @updating = false
     end
 
@@ -126,19 +126,30 @@ module Crash
     # engine.
     #
     # If a NodeList is no longer required, release it with the releaseNodeList method.
-    def get_node_list(node_class : Node.class) : Array(Node)
-      if @families.has_key? node_class
-        return @families[node_class].node_list
+    def get_entities(*components : Crash::Component.class) : Array(Entity)
+      sorted_comps = components.to_a.sort do |a, b|
+        next -1 if a.name < b.name
+        next 1 if a.name > b.name
+        next 0
+      end
+      key = String.build do |io|
+        sorted_comps.each do |comp|
+          io << "+" << comp.name
+        end
       end
 
-      # TODO: later we will allow creating custom families.
-      family : Family = ComponentMatchingFamily.new(node_class, self)
-      @families[node_class] = family
+      if @families.has_key? key
+        return @families[key].entity_list
+      else
+        # TODO: later we will allow creating custom families.
+        family : Family = ComponentMatchingFamily.new(self, *components)
+        @families[key] = family
 
-      @entities.each do |entity|
-        family.new_entity entity
+        @entities.each do |entity|
+          family.new_entity entity
+        end
+        return family.entity_list
       end
-      return family.node_list
     end
 
     #
