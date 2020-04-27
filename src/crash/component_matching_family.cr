@@ -8,12 +8,12 @@ module Crash
   # It uses the basic entity matching pattern of an entity system - entities are added to the list if
   # they contain components matching all the public properties of the node class.
   #
-  class ComponentMatchingFamily < Family
-    @entities : Array(Entity)
-    @entity_map : Hash(Entity, Bool)
+  class ComponentMatchingFamily < Crash::Family
+    @entities : Array(Crash::Entity)
+    @entity_map : Hash(Crash::Entity, Bool)
     @component_to_name_map : Hash(Crash::Component.class, String)
     @name_to_component_map : Hash(String, Crash::Component.class)
-    @engine : Engine
+    @engine : Crash::Engine
 
     #
     # The constructor. Creates a ComponentMatchingFamily to provide a NodeList for the
@@ -22,11 +22,11 @@ module Crash
     # @param nodeClass The type of node to create and manage a NodeList for.
     # @param engine The engine that this family is managing teh NodeList for.
     #
-    def initialize(@engine : Engine, *components : Crash::Component.class)
+    def initialize(@engine : Crash::Engine, *components : Crash::Component.class)
       @name_to_component_map = Hash(String, Crash::Component.class).new
       @component_to_name_map = Hash(Crash::Component.class, String).new
-      @entity_map = Hash(Entity, Bool).new
-      @entities = [] of Entity
+      @entity_map = Hash(Crash::Entity, Bool).new
+      @entities = [] of Crash::Entity
       components.each do |c|
         @name_to_component_map[c.name] = c
         @component_to_name_map[c] = c.name
@@ -38,7 +38,7 @@ module Crash
     # since it is retained and reused by Systems that use the list. i.e. we never recreate the list,
     # we always modify it in place.
     #
-    def entity_list : Array(Entity)
+    def entity_list : Array(Crash::Entity)
       @entities
     end
 
@@ -46,7 +46,7 @@ module Crash
     # Called by the engine when an entity has been added to it. We check if the entity should be in
     # this family's entity list and add it if appropriate.
     #
-    def new_entity(entity : Entity)
+    def new_entity(entity : Crash::Entity)
       add_if_match entity
     end
 
@@ -54,7 +54,7 @@ module Crash
     # Called by the engine when a component has been added to an entity. We check if the entity is not in
     # this family's entity list and should be, and add it if appropriate.
     #
-    def component_added_to_entity(entity : Entity, component_class : Component.class)
+    def component_added_to_entity(entity : Crash::Entity, component_class : Crash::Component.class)
       add_if_match entity
     end
 
@@ -63,7 +63,7 @@ module Crash
     # is required by this family's entity list and if so, we check if the entity is in this this entity list and
     # remove it if so.
     #
-    def component_removed_from_entity(entity : Entity, component_class : Component.class)
+    def component_removed_from_entity(entity : Crash::Entity, component_class : Crash::Component.class)
       if @component_to_name_map.has_key? component_class
         remove_if_match entity
       end
@@ -73,7 +73,7 @@ module Crash
     # Called by the engine when an entity has been rmoved from it. We check if the entity is in
     # this family's entity list and remove it if so.
     #
-    def remove_entity(entity : Entity)
+    def remove_entity(entity : Crash::Entity)
       remove_if_match entity
     end
 
@@ -81,7 +81,7 @@ module Crash
     # If the entity is not in this family's entity list, tests the components of the entity to see
     # if it should be in this entity list and adds it if so.
     #
-    private def add_if_match(entity : Entity)
+    private def add_if_match(entity : Crash::Entity)
       if !@entity_map.has_key?(entity)
         @component_to_name_map.keys.each do |component_class|
           return unless entity.has component_class
@@ -94,7 +94,7 @@ module Crash
     #
     # Removes the entity if it is in this family's entity list.
     #
-    private def remove_if_match(entity : Entity)
+    private def remove_if_match(entity : Crash::Entity)
       if @entity_map.has_key? entity
         @entity_map.delete entity
         @entities.delete entity

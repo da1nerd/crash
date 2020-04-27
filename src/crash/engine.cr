@@ -3,10 +3,10 @@ require "event_handler"
 module Crash
   class Engine
     include EventHandler
-    @entities : Array(Entity)
-    @systems : Array(System)
-    @entity_names : Hash(String, Entity)
-    @families : Hash(String, Family)
+    @entities : Array(Crash::Entity)
+    @systems : Array(Crash::System)
+    @entity_names : Hash(String, Crash::Entity)
+    @families : Hash(String, Crash::Family)
     @updating : Bool
 
     # Indicates if the engine is currently in its update loop.
@@ -17,32 +17,32 @@ module Crash
     event UpdateCompleteEvent
 
     def initialize
-      @entities = [] of Entity
-      @systems = [] of System
-      @entity_names = Hash(String, Entity).new
-      @families = Hash(String, Family).new
+      @entities = [] of Crash::Entity
+      @systems = [] of Crash::System
+      @entity_names = Hash(String, Crash::Entity).new
+      @families = Hash(String, Crash::Family).new
       @updating = false
     end
 
     # Add an entity to the engine.
-    def add_entity(entity : Entity)
+    def add_entity(entity : Crash::Entity)
       if @entity_names.has_key? entity.name
         raise Exception.new("The entity name #{entity.name} is already in use by another entity.")
       end
       @entities.push entity
       @entity_names[entity.name] = entity
-      entity.on(Entity::NameChangedEvent) do |e|
+      entity.on(Crash::Entity::NameChangedEvent) do |e|
         if @entity_names[e.old_name] === e.entity
           @entity_names.delete e.old_name
           @entity_names[e.entity.name] = e.entity
         end
       end
-      entity.on(Entity::ComponentAddedEvent) do |e|
+      entity.on(Crash::Entity::ComponentAddedEvent) do |e|
         @families.each do |_, family|
           family.component_added_to_entity e.entity, e.component_class
         end
       end
-      entity.on(Entity::ComponentRemovedEvent) do |e|
+      entity.on(Crash::Entity::ComponentRemovedEvent) do |e|
         @families.each do |_, family|
           family.component_removed_from_entity e.entity, e.component_class
         end
@@ -53,10 +53,10 @@ module Crash
     end
 
     # Remove an entity from the engine.
-    def remove_entity(entity : Entity)
-      entity.off Entity::NameChangedEvent
-      entity.off Entity::ComponentAddedEvent
-      entity.off Entity::ComponentRemovedEvent
+    def remove_entity(entity : Crash::Entity)
+      entity.off Crash::Entity::NameChangedEvent
+      entity.off Crash::Entity::ComponentAddedEvent
+      entity.off Crash::Entity::ComponentRemovedEvent
       @families.each do |_, family|
         family.remove_entity entity
       end
@@ -72,13 +72,13 @@ module Crash
     end
 
     # Get an entity based on its name.
-    def get_entity_by_name(name : String) : Entity | Nil
+    def get_entity_by_name(name : String) : Crash::Entity | Nil
       if @entity_names.has_key? name
         @entity_names[name]
       end
     end
 
-    def add_system(system : System)
+    def add_system(system : Crash::System)
       add_system system, system.priority
     end
 
@@ -88,7 +88,7 @@ module Crash
     # <p>The priority dictates the order in which the systems are updated by the engine update
     # loop. Lower numbers for priority are updated first. i.e. a priority of 1 is
     # updated before a priority of 2.</p>
-    def add_system(system : System, priority : Int32)
+    def add_system(system : Crash::System, priority : Int32)
       system.type = typeof(system)
       system.priority = priority
       system.add_to_engine self
@@ -99,13 +99,13 @@ module Crash
     end
 
     # Remove a system from the engine.
-    def remove_system(system : System)
+    def remove_system(system : Crash::System)
       @systems.delete system
       system.remove_from_engine self
     end
 
     # Get the system instance of a particular type from within the engine.
-    def get_system(type : System.class) : System | Nil
+    def get_system(type : Crash::System.class) : Crash::System | Nil
       @systems.each do |system|
         return system if system.type == type
       end
@@ -139,14 +139,14 @@ module Crash
     # engine.
     #
     # If a entity list is no longer required, release it with the release_entities method.
-    def get_entities(*components : Crash::Component.class) : Array(Entity)
-      key = Engine.generate_family_key(*components)
+    def get_entities(*components : Crash::Component.class) : Array(Crash::Entity)
+      key = Crash::Engine.generate_family_key(*components)
 
       if @families.has_key? key
         return @families[key].entity_list
       else
         # TODO: later we will allow creating custom families.
-        family : Family = ComponentMatchingFamily.new(self, *components)
+        family : Crash::Family = ComponentMatchingFamily.new(self, *components)
         @families[key] = family
 
         @entities.each do |entity|
@@ -165,7 +165,7 @@ module Crash
     # up memory and processor resources.
     #
     def release_entities(*components : Crash::Component.class)
-      key = Engine.generate_family_key(*components)
+      key = Crash::Engine.generate_family_key(*components)
       if @families.has_key? key
         @families[key].clean_up
       end

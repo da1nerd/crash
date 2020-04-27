@@ -17,7 +17,7 @@ module Crash
 
     # Used internally to hold the type of the system class.
     # This is used to retrieve systems by class type.
-    @type : System.class = System
+    @type : Crash::System.class = Crash::System
     protected property type
 
     #

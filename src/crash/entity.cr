@@ -5,18 +5,18 @@ module Crash
     include EventHandler
     @@name_count : Int32 = 0
     @name : String
-    @components : Hash(Component.class, Component)
+    @components : Hash(Crash::Component.class, Crash::Component)
     protected getter name
 
     # Dispatched when a component is added to the entity
-    event ComponentAddedEvent, entity : Entity, component_class : Component.class
+    event ComponentAddedEvent, entity : Crash::Entity, component_class : Crash::Component.class
 
     # Dispatched when a component is removed from the entity
-    event ComponentRemovedEvent, entity : Entity, component_class : Component.class
+    event ComponentRemovedEvent, entity : Crash::Entity, component_class : Crash::Component.class
 
     # Dispatched when the name of the entity changes.
     # Used internally by the engine to track entitites based on their names.
-    event NameChangedEvent, entity : Entity, old_name : String
+    event NameChangedEvent, entity : Crash::Entity, old_name : String
 
     def initialize
       @@name_count += 1
@@ -24,7 +24,7 @@ module Crash
     end
 
     def initialize(@name : String)
-      @components = Hash(Component.class, Component).new
+      @components = Hash(Crash::Component.class, Crash::Component).new
     end
 
     def name=(name : String)
@@ -50,7 +50,7 @@ module Crash
     #     .add( new Position( 100, 200 )
     #     .add( new Display( new PlayerClip() );</code>
     #
-    def add(component : Component, component_class : Component.class)
+    def add(component : Crash::Component, component_class : Crash::Component.class)
       if @components.has_key? component_class
         remove component_class
       end
@@ -59,11 +59,11 @@ module Crash
       self
     end
 
-    def add(component : Component)
+    def add(component : Crash::Component)
       add component, typeof(component)
     end
 
-    def remove(component_class : Component.class)
+    def remove(component_class : Crash::Component.class)
       if @components.has_key? component_class
         component = @components[component_class]
         @components.delete component_class
@@ -73,7 +73,7 @@ module Crash
     end
 
     # Get a component from the entity.
-    def get(component_class : Component.class) : Component | Nil
+    def get(component_class : Crash::Component.class) : Crash::Component | Nil
       if @components.has_key? component_class
         return @components[component_class]
       end
@@ -90,7 +90,7 @@ module Crash
     # @param componentClass The class of the component sought.
     # @return true if the entity has a component of the type, false if not.
     #
-    def has(component_class : Component.class) : Bool
+    def has(component_class : Crash::Component.class) : Bool
       return @components.has_key? component_class
     end
   end
