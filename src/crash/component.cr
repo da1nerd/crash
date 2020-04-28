@@ -1,4 +1,4 @@
 module Crash
-  class Component
+  abstract class Component
   end
 end

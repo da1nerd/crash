@@ -4,15 +4,15 @@ module Crash
   describe Crash::Entity do
     it "add returns reference to entity" do
       entity = Entity.new
-      component = Component.new
+      component = MockComponent.new
       entity.add(component).should be(entity)
     end
 
     it "can store and retrieve a component" do
       entity = Entity.new
-      component = Component.new
+      component = MockComponent.new
       entity.add(component)
-      entity.get(Component).should be(component)
+      entity.get(MockComponent).should be(component)
     end
 
     it "can store and retrieve multiple components" do
