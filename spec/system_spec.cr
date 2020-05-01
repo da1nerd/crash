@@ -24,7 +24,7 @@ module Crash
       engine = Crash::Engine.new
       system1 = MockSystem.new
       engine.add_system system1, 0
-      engine.update(0.1)
+      engine.update
       system1.time.should eq(0.1)
     end
 
@@ -50,7 +50,7 @@ module Crash
       engine.add_system system1, 1
       system2 = MockSystem.new
       engine.add_system system2, 2
-      engine.update(0.1)
+      engine.update
       # TODO: test order
     end
 
@@ -60,7 +60,7 @@ module Crash
       engine.add_system system2, 2
       system1 = MockSystem.new
       engine.add_system system1, 1
-      engine.update(0.1)
+      engine.update
       # TODO: test order
     end
 
@@ -70,7 +70,7 @@ module Crash
       engine.add_system system1, 1
       system2 = MockSystem.new
       engine.add_system system2, -2
-      engine.update(0.1)
+      engine.update
       # TODO: test order
     end
 
@@ -84,12 +84,12 @@ module Crash
       system = MockSystem.new
       engine.add_system(system)
       # TODO: test if updating is true
-      engine.update(1.0)
+      engine.update
     end
 
     it "updating is false after update" do
       engine = Engine.new
-      engine.update(1.0)
+      engine.update
       engine.updating.should eq(false)
     end
 
@@ -102,7 +102,7 @@ module Crash
       system = MockSystem.new
       engine.add_system system, 0
       emitted.should eq(false)
-      engine.update(0.1)
+      engine.update
       emitted.should eq(true)
     end
 

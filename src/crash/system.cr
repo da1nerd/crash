@@ -46,9 +46,7 @@ module Crash
     # systems in the engine and you don't want to do it while they're updating) add a listener to
     # the engine's updateComplete signal to be notified when the update loop completes.
     #
-    # @param time The duration, in seconds, of the frame.
-    #
-    def update(time : Float64)
+    def update
     end
   end
 end

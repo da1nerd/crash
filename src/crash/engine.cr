@@ -175,12 +175,33 @@ module Crash
     # Update the engine. This causes the engine update loop to run, calling update on all the
     # systems in the engine.
     #
-    # The package net.richardlord.ash.tick contains classes that can be used to provide
-    # a steady or variable tick that calls this update method.
-    def update(time : Float64)
+    # If you need to pass variables to your systems you can extend this class.
+    #
+    # ## Example
+    #
+    # ````
+    # # in your code
+    # module Crash
+    #   class Engine
+    #     def update(*args : Float32)
+    #       @updating = true
+    #       @systems.each do |system|
+    #         system.update(args)
+    #       end
+    #       @updating = false
+    #       emit UpdateCompleteEvent
+    #     end
+    #   end
+    # end
+    # ```
+    #
+    # You can do the same for `System ` to then receive the args.
+    # You can also add additional methds in this fashion. E.g. you could add an `input` method.
+    #
+    def update
       @updating = true
       @systems.each do |system|
-        system.update(time)
+        system.update
       end
       @updating = false
       emit UpdateCompleteEvent

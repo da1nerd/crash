@@ -1,9 +1,29 @@
 require "event_handler"
 
 module Crash
+  # Utility to track the entity count.
+  # We need this because class variable values don't persist between subclasses.
+  class EntityCounter
+    @@count : Int32 = 0
+
+    # Adds 1 to the count
+    protected def self.increment
+      @@count += 1
+    end
+
+    # Returns the count value
+    protected def self.count
+      @@count
+    end
+
+    # Resets the counter
+    protected def self.reset
+      @@count = 0
+    end
+  end
+
   class Entity
     include EventHandler
-    @@name_count : Int32 = 0
     @name : String
     @components : Hash(Crash::Component.class, Crash::Component)
     protected getter name
@@ -19,8 +39,8 @@ module Crash
     event NameChangedEvent, entity : Crash::Entity, old_name : String
 
     def initialize
-      @@name_count += 1
-      initialize "_entity#{@@name_count}"
+      Crash::EntityCounter.increment
+      initialize "_entity#{Crash::EntityCounter.count}"
     end
 
     def initialize(@name : String)

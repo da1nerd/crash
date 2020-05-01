@@ -111,5 +111,14 @@ module Crash
       entity.remove(MockComponent)
       emitted.should eq(true)
     end
+
+    it "subclasses of entity share the same entity count" do
+      EntityCounter.reset
+      EntityCounter.count.should eq(0)
+      Entity.new
+      EntityCounter.count.should eq(1)
+      MockEntity.new
+      EntityCounter.count.should eq(2)
+    end
   end
 end

@@ -5,7 +5,8 @@ class MockSystem < Crash::System
   @time : Float64 = 0
   getter time
 
-  def update(@time : Float64)
+  def update
+    @time += 0.1
   end
 end
 
@@ -31,4 +32,7 @@ class MockComponent2 < Crash::Component
 end
 
 class MockComponentExtended < MockComponent
+end
+
+class MockEntity < Crash::Entity
 end
