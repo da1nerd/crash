@@ -26,7 +26,7 @@ module Crash
     include EventHandler
     @name : String
     @components : Hash(Crash::Component.class, Crash::Component)
-    protected getter name
+    getter name
 
     # Dispatched when a component is added to the entity
     event ComponentAddedEvent, entity : Crash::Entity, component_class : Crash::Component.class
